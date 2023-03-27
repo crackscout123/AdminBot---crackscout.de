@@ -26,7 +26,7 @@ public class Ping {
 			@Override
 			public void onTextMessage(TextMessageEvent e) {
 				// Only react to channel messages not sent by the query itself
-				if (e.getTargetMode() != TextMessageTargetMode.SERVER && e.getInvokerId() != clientId) {
+				if (e.getTargetMode() != TextMessageTargetMode.CLIENT && e.getInvokerId() != clientId) {
 					String message = e.getMessage().toLowerCase();
 
 					Integer clientId = e.getInvokerId();
