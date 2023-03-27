@@ -1,2 +1,5 @@
 /bin/
 AdminBot/auth.app
+AdminBot/auth.app
+*.log
+*.lck
