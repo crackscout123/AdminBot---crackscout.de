@@ -43,7 +43,8 @@ public class KickCollector implements Runnable {
 	}
 	
 	public void kickClients(Client client) {
-		if(kickMeList.contains(client.getId())) {
+		if(kickMeList.contains(client.getId())) {			
+			Utils.kickMeList.remove(client.getId());
 			api.kickClientFromServer(client);
 		}
 	}

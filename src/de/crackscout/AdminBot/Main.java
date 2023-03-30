@@ -7,9 +7,11 @@ import com.github.theholywaffle.teamspeak3.TS3Query;
 
 import de.crackscout.Collectors.AfkCollector;
 import de.crackscout.Collectors.KickCollector;
+import de.crackscout.Commands.Clear;
 import de.crackscout.Commands.KickMe;
 import de.crackscout.Commands.Ping;
 import de.crackscout.Commands.Stay;
+import de.crackscout.Events.StackedEvents;
 import de.crackscout.Events.Disconnect;
 import de.crackscout.Logging.Logging;
 import de.crackscout.Managers.AuthManager;
@@ -63,7 +65,7 @@ public class Main {
 		api = query.getApi();
 		api.login(username, password);
 		api.selectVirtualServerById(serverID);
-		api.setNickname("AdminBot");
+		api.setNickname("AdminBot dev");
 		
 		registerCollectors();
 
@@ -90,9 +92,14 @@ public class Main {
 		KickMe.load();
 		Ping.load();
 		Stay.load();
-		Disconnect.load();
+		Clear.load();
 		
-		Debug.info("Commands loaded.");
+		//events
+		Disconnect.load();
+		StackedEvents.load();
+		
+		
+		Debug.info("Commands & Events loaded.");
 	}
 
 

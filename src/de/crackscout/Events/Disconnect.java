@@ -6,7 +6,6 @@ import com.github.theholywaffle.teamspeak3.api.event.TS3EventAdapter;
 import com.github.theholywaffle.teamspeak3.api.event.TS3EventType;
 
 import de.crackscout.AdminBot.Main;
-import de.crackscout.Managers.Utils;
 
 public class Disconnect {
 	   
@@ -21,8 +20,11 @@ public class Disconnect {
 
 		@Override
 		public void onClientLeave(ClientLeaveEvent e) {
-			Utils.kickMeList.remove(e.getClientId());
-			Utils.whitelistedUsers.remove(e.getClientId());
+			// Utils.whitelistedUsers.remove(client.getId());
+			/*
+			 * TODO:
+			 *  fix: everytime collecting afk users also check for dead-id's in the Array and remove!
+			 */
 			
 			
 		}
