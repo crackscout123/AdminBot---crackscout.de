@@ -33,7 +33,6 @@ public class KickMe {
 					if (message.equals("!kickme")) {
 						Utils.kickMeList.add(e.getInvokerId());
 						api.sendPrivateMessage(e.getInvokerId(), "ok.");
-						
 					} 
 				}
 			}

@@ -18,7 +18,6 @@ public class AfkCollector implements Runnable {
     private int maxIdleTime = 600*1000; // time in seconds x 1000
 	public static ArrayList<Integer> whitelistedUsers = Utils.whitelistedUsers;
     
-    
     public AfkCollector(TS3Api api) {
         this.api = api;
     }
@@ -44,7 +43,6 @@ public class AfkCollector implements Runnable {
 		}
 	}
 	
-	
 	public void moveClient(Client client) {
 		try {		
 	        if (client.getId() != api.whoAmI().getId() && client.getChannelId() != afkChannelId && client.getChannelId() != musicChannelId && client.getIdleTime() > maxIdleTime) {
@@ -54,12 +52,8 @@ public class AfkCollector implements Runnable {
 		} catch (Exception e) {
 			System.out.println("Failed to fetch client details, dumping error info: " + e.getMessage());
 		}
-
 	}
-	
-
 }
-
 
 /** 
  *

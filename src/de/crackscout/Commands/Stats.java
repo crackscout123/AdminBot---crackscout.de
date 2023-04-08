@@ -5,14 +5,12 @@ import com.github.theholywaffle.teamspeak3.api.TextMessageTargetMode;
 import com.github.theholywaffle.teamspeak3.api.event.TS3EventAdapter;
 import com.github.theholywaffle.teamspeak3.api.event.TS3EventType;
 import com.github.theholywaffle.teamspeak3.api.event.TextMessageEvent;
-import com.github.theholywaffle.teamspeak3.api.wrapper.Client;
 
 import de.crackscout.AdminBot.Main;
 import de.crackscout.Managers.AuthManager;
-import de.crackscout.Managers.Debug;
 import de.crackscout.Managers.Utils;
 
-public class Clear {
+public class Stats {
 	
 	   static TS3Api api = Main.api;
 	   
@@ -32,24 +30,25 @@ public class Clear {
 					// Only react to private messages not sent by the query itself
 					if (e.getTargetMode() != TextMessageTargetMode.SERVER && e.getInvokerId() != clientId) {
 						String message = e.getMessage().toLowerCase();
-						
-						Client client = api.getClientByUId(e.getInvokerUniqueId());
-						if(!AuthManager.auth(client)) {
-							Debug.err("auth denied!");
-							return;
-						}
 		
-						if (message.equals("!clear")) {
+						if (message.equals("!stats")) {
 							int kickSize = Utils.kickMeList.size();
 							int whitelistSize = Utils.whitelistedUsers.size();
+							int allowedSize = AuthManager.readKeys().size();
 							
-							api.sendPrivateMessage(e.getInvokerId(), "\nArray<> kickMe has a total size of: " +kickSize +"."
-									+ "\nArray<> whitelist has a total size of: " +whitelistSize+"."
-											+ "\n Both are going to be cleared.");
-							Utils.kickMeList.clear();
-							Utils.whitelistedUsers.clear();
-							api.sendPrivateMessage(e.getInvokerId(), "done.");
+							boolean auth = AuthManager.ignoreAuth;
+							boolean debug = Main.debug;
 							
+							
+							api.sendPrivateMessage(e.getInvokerId(), 
+								  "\nSTATS FOR DEBUG - DEBUG: " + ((debug == false) ? "INAKTIV" : "AKTIV")
+								+ "\nArray<> whitelistedUsers has a total size of: " +whitelistSize+"."
+								+ "\nArray<> kickMeList has a total size of: " +kickSize+"."
+								+ "\n Use !clear to empty those."
+								+ "\n"
+								+ "\nAUTH-SYSTEM: " + ((auth == true) ? "INAKTIV" : "AKTIV")
+								+ "\nAllowed identitys: " + allowedSize
+								+ "\n");
 						} 
 					}
 				}
@@ -58,12 +57,10 @@ public class Clear {
 	}
 
 
-
-
 /** 
  *
  * @author Joel Rzepka - crackscout.de
  *
- * @date 30.03.2023 - 03:11:54
+ * @date 08.04.2023 - 04:55:52
  *
  */

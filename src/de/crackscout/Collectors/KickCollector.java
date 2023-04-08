@@ -8,12 +8,10 @@ import com.github.theholywaffle.teamspeak3.api.wrapper.Client;
 
 import de.crackscout.Managers.Utils;
 
-
 public class KickCollector implements Runnable {
 	
     private final TS3Api api;
     private int sleep = 1*1000; //sleep between collections in seconds (milliseconds x 1000)
-    //public static ArrayList<Integer> whitelistedUsers = new ArrayList<>();
 	public static ArrayList<Integer> whitelistedUsers = Utils.whitelistedUsers;
 	public static ArrayList<Integer> kickMeList = Utils.kickMeList;
 
@@ -39,17 +37,14 @@ public class KickCollector implements Runnable {
 				}
 			}
 		}
-		
 	}
 	
 	public void kickClients(Client client) {
-		if(kickMeList.contains(client.getId())) {			
-			Utils.kickMeList.remove(client.getId());
+		if(kickMeList.contains(client.getId())) {		
 			api.kickClientFromServer(client);
+ 			//kickMeList.remove(id);  - !!! Exception in thread "Thread-1" java.lang.IndexOutOfBoundsException: Index 345 out of bounds for length 1 !!!
 		}
 	}
-	
-
 }
 
 

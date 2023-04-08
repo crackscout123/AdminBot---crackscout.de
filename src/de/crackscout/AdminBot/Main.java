@@ -10,6 +10,7 @@ import de.crackscout.Collectors.KickCollector;
 import de.crackscout.Commands.Clear;
 import de.crackscout.Commands.KickMe;
 import de.crackscout.Commands.Ping;
+import de.crackscout.Commands.Stats;
 import de.crackscout.Commands.Stay;
 import de.crackscout.Events.StackedEvents;
 import de.crackscout.Events.Disconnect;
@@ -65,7 +66,7 @@ public class Main {
 		api = query.getApi();
 		api.login(username, password);
 		api.selectVirtualServerById(serverID);
-		api.setNickname("AdminBot dev");
+		api.setNickname("AdminBot");
 		
 		registerCollectors();
 
@@ -93,6 +94,7 @@ public class Main {
 		Ping.load();
 		Stay.load();
 		Clear.load();
+		Stats.load();
 		
 		//events
 		Disconnect.load();
