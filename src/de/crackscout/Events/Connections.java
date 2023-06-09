@@ -17,10 +17,10 @@ import com.github.theholywaffle.teamspeak3.api.event.TextMessageEvent;
 import com.github.theholywaffle.teamspeak3.api.wrapper.Client;
 
 import de.crackscout.AdminBot.Main;
-import de.crackscout.Managers.AuthManager;
+import de.crackscout.Managers.WordFilterManager;
 
-public class StackedEvents {
-	   
+public class Connections {
+	
 	static TS3Api api = Main.api;
 	   
 	public static void load(){
@@ -33,15 +33,12 @@ public class StackedEvents {
 			public void onClientJoin(ClientJoinEvent e) {
 				
 				Client client = api.getClientByUId(e.getUniqueClientIdentifier());
-				
-				if(AuthManager.auth(client)) {
-					api.sendPrivateMessage(client.getId(), "\nWelcome Admin"
-							+ "\n!stay - Ignore AFK"
-							+ "\n!kickme - Self kick"
-							+ "\n!clear - Clear the Array cache"
-							+ "\n!ping - Ping"
-							+ "\n!stats - Show debuging informations");
+				WordFilterManager.check(client.getNickname());
+				if(WordFilterManager.check(client.getNickname())) {
+					api.kickClientFromServer("Blacklisted name! Please change it!", client);
 				}
+				// check for 'bad-names'
+
 			}
 			
 			@Override
@@ -108,6 +105,6 @@ public class StackedEvents {
  *
  * @author Joel Rzepka - crackscout.de
  *
- * @date 30.03.2023 - 02:38:34
+ * @date 09.06.2023 - 23:32:48
  *
  */
