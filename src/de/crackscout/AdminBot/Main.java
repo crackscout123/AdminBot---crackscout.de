@@ -87,6 +87,7 @@ public class Main {
 		Debug.info("Auth: registerd.");
 		
 		Debug.info("Bot loaded.");
+		System.out.println("done."); //for pterodactyl install script
 		
 	}
 
