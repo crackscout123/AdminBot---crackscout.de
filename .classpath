@@ -8,5 +8,6 @@
 	</classpathentry>
 	<classpathentry kind="lib" path="D:/Dev/apis/teamspeak3-api-1.3.1-with-dependencies.jar"/>
 	<classpathentry kind="lib" path="C:/Users/rzepk/IdeaProjects/Ptero4J/out/artifacts/Ptero4J_jar/Ptero4J.jar"/>
+	<classpathentry kind="lib" path="D:/Dev/DBapi/dbapi_testing_0.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

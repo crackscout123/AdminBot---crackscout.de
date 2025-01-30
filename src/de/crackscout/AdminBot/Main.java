@@ -1,9 +1,12 @@
 package de.crackscout.AdminBot;
 
 
+import java.util.logging.Logger;
+
 import com.github.theholywaffle.teamspeak3.TS3Api;
 import com.github.theholywaffle.teamspeak3.TS3Config;
 import com.github.theholywaffle.teamspeak3.TS3Query;
+
 import de.crackscout.Collectors.AfkCollector;
 import de.crackscout.Collectors.KickCollector;
 import de.crackscout.Commands.Clear;
@@ -28,14 +31,21 @@ public class Main {
 	private static Integer serverID;
 	private static String[] credentials;
 	public static Boolean debug = false;
+
+
 		
 	private static Thread collectorProzess, kickCollector;
+	private static final Logger LOGGER = Logger.getLogger( Logging.class.getName() );
 
 	
 	// java adminbot.jar "hostname" "serverID" "username:password" -debug
 	
-	public static void main(String[] args) {
-			
+
+	
+
+	
+	public static void main(String[] args) {	
+		
 		registerLogging();
 		
 		Debug.info("Bot loading.");

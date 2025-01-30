@@ -13,8 +13,8 @@ public class AfkCollector implements Runnable {
 
     private final TS3Api api;
     private int sleep = 60*1000; //sleep between collections in seconds x 1000
-    private int afkChannelId = 19;
-    private int musicChannelId = 18;
+    private int afkChannelId = 24;
+    private int musicChannelId = 22;
     private int maxIdleTime = 600*1000; // time in seconds x 1000
 	public static ArrayList<Integer> whitelistedUsers = Utils.whitelistedUsers;
     
