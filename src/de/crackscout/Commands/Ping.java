@@ -32,11 +32,11 @@ public class Ping {
 					Integer clientId = e.getInvokerId();
 					if (message.equals("!ping")) {
 						// Answer "!ping" with "pong"
-						api.sendPrivateMessage(clientId, "pong");
+						api.sendPrivateMessage(e.getInvokerId(), "pong");
 					} else if (message.startsWith("hello")) {
 						// Greet whoever said hello
 						// Message: "Hello <client name>!"
-						api.sendPrivateMessage(clientId, "Hello " + e.getInvokerName() + "!");
+						api.sendPrivateMessage(e.getInvokerId(), "Hello " + e.getInvokerName() + "!");
 					}
 				}
 			}
