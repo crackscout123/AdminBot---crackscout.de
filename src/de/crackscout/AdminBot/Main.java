@@ -2,6 +2,7 @@ package de.crackscout.AdminBot;
 
 
 import java.util.logging.Logger;
+import de.crackscout.Logging.Logging;
 
 import com.github.theholywaffle.teamspeak3.TS3Api;
 import com.github.theholywaffle.teamspeak3.TS3Config;
@@ -9,15 +10,18 @@ import com.github.theholywaffle.teamspeak3.TS3Query;
 
 import de.crackscout.Collectors.AfkCollector;
 import de.crackscout.Collectors.KickCollector;
+
 import de.crackscout.Commands.Clear;
 import de.crackscout.Commands.KickMe;
 import de.crackscout.Commands.Ping;
 import de.crackscout.Commands.Stats;
 import de.crackscout.Commands.Stay;
+import de.crackscout.Commands.TrollCommands.Trollmove;
+
 import de.crackscout.Events.Connections;
 import de.crackscout.Events.Disconnect;
 import de.crackscout.Events.StackedEvents;
-import de.crackscout.Logging.Logging;
+
 import de.crackscout.Managers.AuthManager;
 import de.crackscout.Managers.Debug;
 import de.crackscout.Managers.WordFilterManager;
@@ -62,7 +66,7 @@ public class Main {
 	    		
 	    		if(args.length == 4) {
 	    			if(args[3].contains("debug")) {
-	    				debug = true;
+	    				debug = false;
 	    			}
 	    		} 
 	    	}
@@ -130,6 +134,9 @@ public class Main {
 		Disconnect.load();
 		Connections.load();
 		StackedEvents.load();
+
+		//troll commands
+		Trollmove.load();
 		
 		
 		Debug.info("Commands & Events loaded.");
