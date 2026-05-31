@@ -1,6 +1,7 @@
 package de.crackscout.Collectors;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import com.github.theholywaffle.teamspeak3.TS3Api;
@@ -12,10 +13,11 @@ public class AfkCollector implements Runnable {
 
 
     private final TS3Api api;
-    private int sleep = 60*1000; //sleep between collections in seconds x 1000
-    private int afkChannelId = 24;
-    private int musicChannelId = 22;
-    private int maxIdleTime = 600*1000; // time in seconds x 1000
+    private int sleep = 60*1000; //sleep between collections in seconds x 1000 (milliseconds)
+    private int afkChannelId = 19;
+	private int silentGroupId = 18;
+    private int musicChannelId = 20;
+    private int maxIdleTime = 600*1000; //time in milliseconds (seconds x 1000)
 	public static ArrayList<Integer> whitelistedUsers = Utils.whitelistedUsers;
     
     public AfkCollector(TS3Api api) {
@@ -46,6 +48,9 @@ public class AfkCollector implements Runnable {
 	public void moveClient(Client client) {
 		try {		
 	        if (client.getId() != api.whoAmI().getId() && client.getChannelId() != afkChannelId && client.getChannelId() != musicChannelId && client.getIdleTime() > maxIdleTime) {
+				if (Arrays.stream(client.getServerGroups()).anyMatch(g -> g == silentGroupId)) {
+					return;
+				}
 	        	api.moveClient(client.getId(), afkChannelId);
 	            api.sendPrivateMessage(client.getId(), "Du wurdest in den AFK-Channel verschoben!");
 	        }

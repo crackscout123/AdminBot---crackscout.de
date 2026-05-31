@@ -44,10 +44,6 @@ public class Main {
 	
 	// java adminbot.jar "hostname" "serverID" "username:password" -debug
 	
-
-	
-
-	
 	public static void main(String[] args) {	
 		
 		registerLogging();
