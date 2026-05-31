@@ -5,3 +5,4 @@ AdminBot/auth.app
 *.lck
 AdminBot/auth.app
 .vscode/launch.json
+.vscode/launch.json
