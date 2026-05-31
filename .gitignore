@@ -4,3 +4,4 @@ AdminBot/auth.app
 *.log
 *.lck
 AdminBot/auth.app
+.vscode/launch.json
