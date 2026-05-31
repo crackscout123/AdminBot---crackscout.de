@@ -1,5 +1,5 @@
-#Sat Jun 10 00:18:32 CEST 2023 - still under development, this feature will be added next release // words are phrased line by line
-enabled=true
-penis
-muschi
-arsch
+# This is the blacklist file. Add words you want to filter out line by line.
+# Lines starting with # are ignored and can be used for comments.
+example1
+example2
+example3
