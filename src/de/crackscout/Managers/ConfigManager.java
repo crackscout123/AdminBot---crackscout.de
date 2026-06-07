@@ -7,28 +7,31 @@ import java.io.IOException;
 import java.util.Properties;
 
 public class ConfigManager {
-public static Properties prop = new Properties();
 	
-	public static void saveProp (String key, String value, String file) {
+	public static void saveProp(String key, String value, String file) {
+		Properties p = new Properties();
+		File f = new File("AdminBot/" + file);
+		// Bestehende Keys laden, dann neuen hinzufügen
+		if (f.exists()) {
+			try { p.load(new FileInputStream(f)); } catch (IOException ignored) {}
+		}
 		try {
-			prop.setProperty(key, value);
-			prop.store(new FileOutputStream("AdminBot/" + file), null);
+			p.setProperty(key, value);
+			p.store(new FileOutputStream(f), null);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 	
 	public static String loadProp(String key, String file) {
-		String value = "";
+		Properties p = new Properties();
 		try {
-			prop.load(new FileInputStream("AdminBot/" + file));
-			value = prop.getProperty(key);
+			p.load(new FileInputStream("AdminBot/" + file));
+			return p.getProperty(key);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
+			return null;
 		}
-		return value;
 	}
 	
 	public static void createFunctionsFolder() {

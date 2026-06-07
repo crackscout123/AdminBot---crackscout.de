@@ -16,7 +16,7 @@ public class AfkCollector implements Runnable {
     private int sleep = 60*1000; //sleep between collections in seconds x 1000 (milliseconds)
     private int afkChannelId = 19;
 	private int silentGroupId = 18;
-    private int musicChannelId = 20;
+    private int ignoredChannelIds[] = {20, 31, 11, 12, 26, 13}; //IDs of channels that should be ignored by the collector
     private int maxIdleTime = 600*1000; //time in milliseconds (seconds x 1000)
 	public static ArrayList<Integer> whitelistedUsers = Utils.whitelistedUsers;
     
@@ -47,7 +47,7 @@ public class AfkCollector implements Runnable {
 	
 	public void moveClient(Client client) {
 		try {		
-	        if (client.getId() != api.whoAmI().getId() && client.getChannelId() != afkChannelId && client.getChannelId() != musicChannelId && client.getIdleTime() > maxIdleTime) {
+	        if (client.getId() != api.whoAmI().getId() && client.getChannelId() != afkChannelId && Arrays.stream(ignoredChannelIds).anyMatch(c -> c != client.getChannelId()) && client.getIdleTime() > maxIdleTime) {
 				if (Arrays.stream(client.getServerGroups()).anyMatch(g -> g == silentGroupId)) {
 					return;
 				}
