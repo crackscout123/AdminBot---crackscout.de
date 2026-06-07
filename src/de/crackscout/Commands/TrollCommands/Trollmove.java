@@ -1,6 +1,8 @@
 package de.crackscout.Commands.TrollCommands;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import com.github.theholywaffle.teamspeak3.TS3Api;
 import com.github.theholywaffle.teamspeak3.api.TextMessageTargetMode;
@@ -32,6 +34,7 @@ public class Trollmove {
         static int IGNORED_CLIENT_IDS[] = {4, 5, 6}; // example client IDs to ignore
         static int IGNORED_GROUP_IDS[] = {7, 8, 9}; // example group IDs to ignore
         static Client targetClient; // the client to be moved
+        static List<Channel> validChannels = new ArrayList<>(); // list of channels the client can be moved to
 
 	   
 		public static void load(){
@@ -63,10 +66,19 @@ public class Trollmove {
 						 */
 		
 						if (message.equals("!trollmove")) {
-                            if(targetClient == null) {
-                                api.sendPrivateMessage(e.getInvokerId(), "No target client set. Please specify a client to move.");
+                            api.sendPrivateMessage(e.getInvokerId(), "Usage: !trollmove <clientName/id> <amount/duration>");
+                        } else if (message.startsWith("!trollmove ")) {
+                            if(args.length < 3) {
+                                api.sendPrivateMessage(e.getInvokerId(), "Usage: !trollmove <clientName/id> <amount/duration>");
                                 return;
                             }
+                                                        
+                            if(!isInteger(args[1])) {
+                                targetClient = api.getClientByNameExact(args[1], true);
+                            } else {
+                                targetClient = api.getClientInfo(Integer.parseInt(args[1]));
+                            }
+
 /*                            if(targetClient.getId() == clientId) {
                                 api.sendPrivateMessage(e.getInvokerId(), "You cannot move yourself.");
                                 return;
@@ -80,22 +92,23 @@ public class Trollmove {
                                 api.sendPrivateMessage(e.getInvokerId(), "The target client is not in a channel.");
                                 return;
                             }
-                            
-                            if(!isInteger(args[1])) {
-                                targetClient = api.getClientByNameExact(args[1], true);
-                            } else {
-                                targetClient = api.getClientInfo(Integer.parseInt(args[1]));
+
+                            if(targetClient == null) {
+                                api.sendPrivateMessage(e.getInvokerId(), "No target client set. Please specify a client to move.");
+                                return;
                             }
 							
-							api.sendPrivateMessage(e.getInvokerId(), "");
+							api.sendPrivateMessage(e.getInvokerId(), "debug: target client identified as " + targetClient.getNickname() + " with ID " + targetClient.getId());
 							if(isInteger(args[2])) {
                                 int amount = Integer.parseInt(args[2]);
+                                validadChannlIds(targetClient.getChannelId(), api.getChannels());
                                 for(int i = 0; i < amount; i++) {
-                                    api.moveClient(targetClient.getId(), targetClient.getChannelId());
-                                }
+                                    moveClientToRandomChannel();     
+                            }
                             } else {
+                                validadChannlIds(targetClient.getChannelId(), api.getChannels()); 
                                 // read out the time indicator and parse the duration in seconds
-                                int duration = Integer.parseInt(args[2]);
+                                int duration = Integer.parseInt(args[2].substring(0, args[2].length() - 1));
                                 if(args[2].endsWith("s")) {
                                     duration = Integer.parseInt(args[2].substring(0, args[2].length() - 1));
                                 } else if(args[2].endsWith("m")) {
@@ -107,23 +120,7 @@ public class Trollmove {
                                 new Thread(() -> {
                                     long endTime = System.currentTimeMillis() + durationSeconds * 1000L;
                                     while(System.currentTimeMillis() < endTime) {
-                                        // move the client to a random channel that is not a spacer every second
-                                         int currentChannelId = targetClient.getChannelId();
-                                         List<Channel> channels = api.getChannels();
-                                         List<Channel> validChannels = new java.util.ArrayList<>();
-                                         for (Channel channel : channels) {
-                                             String name = channel.getName();
-                                            boolean isSpacer = name.matches(".^\\[(?:([rcl])?spacer(\\d+))\\](.*)$");
-                                             if (!isSpacer && channel.getId() != currentChannelId) {
-                                                 validChannels.add(channel);
-                                             }
-                                         }
-                                         if (!validChannels.isEmpty()) {
-                                             Channel randomChannel = validChannels.get(new java.util.Random().nextInt(validChannels.size()));
-                                             api.moveClient(targetClient.getId(), randomChannel.getId());
-                                         }
-                                        
-                                         
+                                        moveClientToRandomChannel();                                    
                                         try {
                                             Thread.sleep(1000);
                                         } catch (InterruptedException ex) {
@@ -135,6 +132,33 @@ public class Trollmove {
 						} 
 					}
 				}
+
+                private void moveClientToRandomChannel() {
+                     if (!validChannels.isEmpty()) {
+                         validChannels.removeIf(channel -> channel.getId() == targetClient.getChannelId()); // remove the current channel from the list of valid channels
+                         Channel randomChannel = validChannels.get(new Random().nextInt(validChannels.size()));
+                         System.out.println("removeme: Moving client " + targetClient.getNickname() + " to channel " + randomChannel.getName());
+                         api.moveClient(targetClient.getId(), randomChannel.getId());
+                         // i some how still get already member of channel error, 
+                         // even though the target channel is removed from the list of valid channels. 
+                         // and there multiple checks troughout the whole class to just check for this simple thing, 
+                         // maybe the channel list is not updated after moving the client? need to check that in the future.
+                         // generally speaking its working most of the time, but sometimes it tries to move the client to the same channel, which results in an error. need to fix that in the future.
+                         // gonna push this as it is for now, since the basic functionality is there 
+                     }
+                }
+
+                private void validadChannlIds(int currentChannelId, List<Channel> channels) {
+                     validChannels.clear();
+                    for (Channel channel : channels) {
+                         String name = channel.getName();
+                        boolean isSpacer = name.matches("^\\[(?:[rcl]?spacer\\d*)\\].*");
+                         if (!isSpacer && channel.getId() != currentChannelId) {
+                             validChannels.add(channel);
+                             System.out.println("removeme: Added channel " + channel.getName() + " to valid channels list.");
+                         }
+                     }
+                }
 
                 public boolean isInteger(String s) {
                         try { 

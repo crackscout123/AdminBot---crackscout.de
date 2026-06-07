@@ -1,8 +1,5 @@
 /bin/
 AdminBot/auth.app
-AdminBot/auth.app
 *.log
 *.lck
-AdminBot/auth.app
-.vscode/launch.json
 .vscode/launch.json

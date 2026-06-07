@@ -62,7 +62,7 @@ public class Main {
 	    		
 	    		if(args.length == 4) {
 	    			if(args[3].contains("debug")) {
-	    				debug = false;
+	    				debug = true; 
 	    			}
 	    		} 
 	    	}
@@ -78,7 +78,7 @@ public class Main {
 		api = query.getApi();
 		api.login(username, password);
 		api.selectVirtualServerById(serverID);
-		api.setNickname("AdminBot dev");
+		api.setNickname("AdminBot dev-0.1.4");
 		
 		
 		registerWordFilter();
