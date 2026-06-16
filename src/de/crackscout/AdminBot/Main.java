@@ -24,6 +24,8 @@ import de.crackscout.Events.StackedEvents;
 
 import de.crackscout.Managers.AuthManager;
 import de.crackscout.Managers.Debug;
+import de.crackscout.Managers.MessageManager;
+import de.crackscout.Managers.SettingsManager;
 import de.crackscout.Managers.WordFilterManager;
 
 
@@ -78,8 +80,14 @@ public class Main {
 		api = query.getApi();
 		api.login(username, password);
 		api.selectVirtualServerById(serverID);
-		api.setNickname("AdminBot dev-0.1.4");
+		api.setNickname("AdminBot dev-0.1.5");
 		
+
+		registerSettingsManager();
+		Debug.info("SettingsManager: registerd.");
+		
+		registerMessageManager();
+		Debug.info("MessageManager: registerd.");
 		
 		registerWordFilter();
 		Debug.info("WordFilter: registerd.");
@@ -99,6 +107,16 @@ public class Main {
 		Debug.info("Bot loaded.");
 		System.out.println("done."); //for pterodactyl install script
 		
+	}
+
+
+	private static void registerSettingsManager() {
+		SettingsManager.createDefaults();
+	}
+
+
+	private static void registerMessageManager() {
+		MessageManager.createDefaults();
 	}
 
 

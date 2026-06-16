@@ -7,6 +7,7 @@ import java.util.List;
 import com.github.theholywaffle.teamspeak3.TS3Api;
 import com.github.theholywaffle.teamspeak3.api.wrapper.Client;
 
+import de.crackscout.Managers.ConfigManager;
 import de.crackscout.Managers.Utils;
 
 public class AfkCollector implements Runnable {
@@ -19,6 +20,8 @@ public class AfkCollector implements Runnable {
     private int ignoredChannelIds[] = {20, 31, 11, 12, 26, 13}; //IDs of channels that should be ignored by the collector
     private int maxIdleTime = 600*1000; //time in milliseconds (seconds x 1000)
 	public static ArrayList<Integer> whitelistedUsers = Utils.whitelistedUsers;
+
+	public static String msg_afk_moved = ConfigManager.loadProp("afk.moved", "messages.properties");
     
     public AfkCollector(TS3Api api) {
         this.api = api;
@@ -52,7 +55,8 @@ public class AfkCollector implements Runnable {
 					return;
 				}
 	        	api.moveClient(client.getId(), afkChannelId);
-	            api.sendPrivateMessage(client.getId(), "Du wurdest in den AFK-Channel verschoben!");
+				api.sendPrivateMessage(client.getId(), msg_afk_moved);
+	            //api.sendPrivateMessage(client.getId(), "Du wurdest in den AFK-Channel verschoben!");
 	        }
 		} catch (Exception e) {
 			System.out.println("Failed to fetch client details, dumping error info: " + e.getMessage());
