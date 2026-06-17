@@ -23,7 +23,10 @@ import de.crackscout.Events.Disconnect;
 import de.crackscout.Events.StackedEvents;
 
 import de.crackscout.Managers.AuthManager;
+import de.crackscout.Managers.ConfigManager;
 import de.crackscout.Managers.Debug;
+import de.crackscout.Managers.MessageManager;
+import de.crackscout.Managers.SettingsManager;
 import de.crackscout.Managers.WordFilterManager;
 
 
@@ -40,6 +43,10 @@ public class Main {
 		
 	private static Thread collectorProzess, kickCollector;
 	private static final Logger LOGGER = Logger.getLogger( Logging.class.getName() );
+	
+	//public static String bot_nickname = ConfigManager.loadProp("bot.nickname", "config.properties");
+	public static String bot_nickname = 
+	ConfigManager.loadProp("bot.nickname", "config.properties") != null ? ConfigManager.loadProp("bot.nickname", "config.properties") : "AdminBot dev-0.1.5";
 
 	
 	// java adminbot.jar "hostname" "serverID" "username:password" -debug
@@ -78,8 +85,14 @@ public class Main {
 		api = query.getApi();
 		api.login(username, password);
 		api.selectVirtualServerById(serverID);
-		api.setNickname("AdminBot dev-0.1.4");
+		api.setNickname(bot_nickname);
 		
+
+		registerSettingsManager();
+		Debug.info("SettingsManager: registerd.");
+		
+		registerMessageManager();
+		Debug.info("MessageManager: registerd.");
 		
 		registerWordFilter();
 		Debug.info("WordFilter: registerd.");
@@ -99,6 +112,16 @@ public class Main {
 		Debug.info("Bot loaded.");
 		System.out.println("done."); //for pterodactyl install script
 		
+	}
+
+
+	private static void registerSettingsManager() {
+		SettingsManager.createDefaults();
+	}
+
+
+	private static void registerMessageManager() {
+		MessageManager.createDefaults();
 	}
 
 

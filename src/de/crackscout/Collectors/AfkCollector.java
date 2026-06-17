@@ -7,19 +7,24 @@ import java.util.List;
 import com.github.theholywaffle.teamspeak3.TS3Api;
 import com.github.theholywaffle.teamspeak3.api.wrapper.Client;
 
+import de.crackscout.Managers.ConfigManager;
 import de.crackscout.Managers.Utils;
 
 public class AfkCollector implements Runnable {
 
 
     private final TS3Api api;
-    private int sleep = 60*1000; //sleep between collections in seconds x 1000 (milliseconds)
-    private int afkChannelId = 19;
-	private int silentGroupId = 18;
-    private int ignoredChannelIds[] = {20, 31, 11, 12, 26, 13}; //IDs of channels that should be ignored by the collector
-    private int maxIdleTime = 600*1000; //time in milliseconds (seconds x 1000)
 	public static ArrayList<Integer> whitelistedUsers = Utils.whitelistedUsers;
-    
+
+	public static String msg_afk_moved = ConfigManager.loadProp("afk.moved", "messages.properties");
+
+	public static int[] ignoredChannels = ConfigManager.loadIntArray("afk.ignored.channels", "config.properties");
+	public static int[] ignoredGroups = ConfigManager.loadIntArray("afk.ignored.groups", "config.properties");
+	
+	public static int afkChannelId = ConfigManager.loadInt("afk.afk.channel", "config.properties");
+	public static int sleepTime = ConfigManager.loadInt("afk.sleep.ms", "config.properties");
+	public static int maxIdleTime = ConfigManager.loadInt("afk.max.idle.ms", "config.properties");
+
     public AfkCollector(TS3Api api) {
         this.api = api;
     }
@@ -28,7 +33,7 @@ public class AfkCollector implements Runnable {
 	public void run() {
 		while (true) {
 			try {
-				Thread.sleep(sleep);
+				Thread.sleep(sleepTime);
 			} catch (InterruptedException e) {
 				System.out.println("Encountered an interrupted exception while sleeping, shutting down collection service... \n Dumping error:");
 				e.printStackTrace();
@@ -36,7 +41,7 @@ public class AfkCollector implements Runnable {
 			}
 			
 			List<Client> clients = api.getClients();
-			System.out.println("Trying to move and evaluate clients...");
+			System.out.println("Trying to move and evaluate clients... \n DEBUG: ignored channels: " + Arrays.toString(ignoredChannels));
 			for (Client client : clients) {
 				if(!whitelistedUsers.contains(client.getId())) {
 					moveClient(client);
@@ -47,12 +52,12 @@ public class AfkCollector implements Runnable {
 	
 	public void moveClient(Client client) {
 		try {		
-	        if (client.getId() != api.whoAmI().getId() && client.getChannelId() != afkChannelId && Arrays.stream(ignoredChannelIds).anyMatch(c -> c != client.getChannelId()) && client.getIdleTime() > maxIdleTime) {
-				if (Arrays.stream(client.getServerGroups()).anyMatch(g -> g == silentGroupId)) {
+	        if (client.getId() != api.whoAmI().getId() && client.getChannelId() != afkChannelId && Arrays.stream(ignoredChannels).anyMatch(c -> c != client.getChannelId()) && client.getIdleTime() > maxIdleTime) {
+				if (Arrays.stream(client.getServerGroups()).anyMatch(g -> Arrays.stream(ignoredGroups).anyMatch(ignored -> ignored == g))) {
 					return;
 				}
 	        	api.moveClient(client.getId(), afkChannelId);
-	            api.sendPrivateMessage(client.getId(), "Du wurdest in den AFK-Channel verschoben!");
+				api.sendPrivateMessage(client.getId(), msg_afk_moved);
 	        }
 		} catch (Exception e) {
 			System.out.println("Failed to fetch client details, dumping error info: " + e.getMessage());

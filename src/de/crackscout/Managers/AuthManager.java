@@ -13,11 +13,11 @@ public class AuthManager {
 	public static Client sender;
 	public static Client target;
 	public static String file = "auth.app";
-	public static Boolean ignoreAuth = Boolean.parseBoolean(ConfigManager.loadProp("ignoreAuth", file));
+	public static Boolean ignoreAuth = Boolean.parseBoolean(ConfigManager.loadProp("auth.ignore", "config.properties"));
 		
 	public static void createDefaults() {
 		if(!ConfigManager.checkForDefault(file)) {
-			ConfigManager.saveProp("ignoreAuth", "false", file);
+			ConfigManager.saveProp("#your_uid_token_here_line_by_line", "", file);
 		}
 	}
 	
@@ -36,7 +36,6 @@ public class AuthManager {
 	public static List<String> readKeys() {
 		try {
 			List<String> allLines = Files.readAllLines(Paths.get("AdminBot/auth.app"));
-			allLines.remove(0);
 			allLines.remove(0);
 			return allLines;
 
