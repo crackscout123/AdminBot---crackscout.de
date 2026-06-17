@@ -15,8 +15,9 @@ public class WordFilterManager {
 	public static Client target;
 	public static String blacklistFileName = "blacklisted_words.app";
 	public static Boolean enabled = Boolean.parseBoolean(
-		ConfigManager.loadProp("enabled", blacklistFileName) != null ? ConfigManager.loadProp("enabled", blacklistFileName) : "true"
+		ConfigManager.loadProp("wordfilter.enabled", "config.properties") != null ? ConfigManager.loadProp("wordfilter.enabled", "config.properties") : "true"
 	);
+	
 	public static List<String> words = readWords() != null ? readWords() : new ArrayList<>();	
 	public static void createDefaults() {
 		if(!ConfigManager.checkForDefault(blacklistFileName)) {

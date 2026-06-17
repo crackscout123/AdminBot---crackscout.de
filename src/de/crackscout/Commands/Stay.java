@@ -9,12 +9,16 @@ import com.github.theholywaffle.teamspeak3.api.wrapper.Client;
 
 import de.crackscout.AdminBot.Main;
 import de.crackscout.Managers.AuthManager;
+import de.crackscout.Managers.ConfigManager;
 import de.crackscout.Managers.Debug;
 import de.crackscout.Managers.Utils;
 
 public class Stay {
 
 	   static TS3Api api = Main.api;
+	   
+		public static String msg_stay_added = ConfigManager.loadProp("stay.added", "messages.properties");
+		public static String msg_stay_removed = ConfigManager.loadProp("stay.removed", "messages.properties");
 	   
 		public static void load(){
 			// Get our own client ID by running the "whoami" command
@@ -43,11 +47,11 @@ public class Stay {
 						if (message.equals("!stay")) {
 							if(Utils.whitelistedUsers.contains(clientId)) {
 								Utils.whitelistedUsers.remove(clientId);
-								api.sendPrivateMessage(e.getInvokerId(), "removed from whitelist");
+								api.sendPrivateMessage(e.getInvokerId(), msg_stay_removed);
 								Debug.info("removed " +  e.getInvokerName() + " from whitelist");
 							}else {
 								Utils.whitelistedUsers.add(clientId);
-								api.sendPrivateMessage(e.getInvokerId(), "added to whitelist");
+								api.sendPrivateMessage(e.getInvokerId(), msg_stay_added);
 								Debug.info("added " +  e.getInvokerName() + " to whitelist");
 							}
 						} 

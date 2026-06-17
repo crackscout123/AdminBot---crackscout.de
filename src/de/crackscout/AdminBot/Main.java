@@ -23,6 +23,7 @@ import de.crackscout.Events.Disconnect;
 import de.crackscout.Events.StackedEvents;
 
 import de.crackscout.Managers.AuthManager;
+import de.crackscout.Managers.ConfigManager;
 import de.crackscout.Managers.Debug;
 import de.crackscout.Managers.MessageManager;
 import de.crackscout.Managers.SettingsManager;
@@ -42,6 +43,10 @@ public class Main {
 		
 	private static Thread collectorProzess, kickCollector;
 	private static final Logger LOGGER = Logger.getLogger( Logging.class.getName() );
+	
+	//public static String bot_nickname = ConfigManager.loadProp("bot.nickname", "config.properties");
+	public static String bot_nickname = 
+	ConfigManager.loadProp("bot.nickname", "config.properties") != null ? ConfigManager.loadProp("bot.nickname", "config.properties") : "AdminBot dev-0.1.5";
 
 	
 	// java adminbot.jar "hostname" "serverID" "username:password" -debug
@@ -80,7 +85,7 @@ public class Main {
 		api = query.getApi();
 		api.login(username, password);
 		api.selectVirtualServerById(serverID);
-		api.setNickname("AdminBot dev-0.1.5");
+		api.setNickname(bot_nickname);
 		
 
 		registerSettingsManager();

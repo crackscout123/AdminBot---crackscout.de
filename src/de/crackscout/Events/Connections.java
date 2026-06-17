@@ -17,11 +17,14 @@ import com.github.theholywaffle.teamspeak3.api.event.TextMessageEvent;
 import com.github.theholywaffle.teamspeak3.api.wrapper.Client;
 
 import de.crackscout.AdminBot.Main;
+import de.crackscout.Managers.ConfigManager;
 import de.crackscout.Managers.WordFilterManager;
 
 public class Connections {
 	
 	static TS3Api api = Main.api;
+
+	public static String msg_wordfilter_kick = ConfigManager.loadProp("wordfilter.kick", "messages.properties");
 	   
 	public static void load(){
 		
@@ -35,7 +38,7 @@ public class Connections {
 				Client client = api.getClientByUId(e.getUniqueClientIdentifier());
 				WordFilterManager.check(client.getNickname());
 				if(WordFilterManager.check(client.getNickname())) {
-					api.kickClientFromServer("Blacklisted name! Please change it!", client);
+					api.kickClientFromServer(msg_wordfilter_kick, client);
 				}
 				// check for 'bad-names'
 

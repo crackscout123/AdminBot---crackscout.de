@@ -10,11 +10,11 @@ public class SettingsManager {
                 ConfigManager.saveProp("bot.nickname", "AdminBot", file);
                 ConfigManager.saveProp("bot.debug", "false", file);
 
-                ConfigManager.saveProp("afk.channel.id", "19", file);
-                ConfigManager.saveProp("afk.silent.group.id", "18", file);
-                ConfigManager.saveProp("afk.music.channel.id", "20", file);
+                ConfigManager.saveProp("afk.ignored.groups", "18,", file);
                 ConfigManager.saveProp("afk.sleep.ms", "60000", file);
                 ConfigManager.saveProp("afk.max.idle.ms", "600000", file);
+                ConfigManager.saveProp("afk.afk.channel", "19", file);
+                ConfigManager.saveProp("afk.ignored.channels", "20,31,11,12,26,13,19,20", file);
 
                 ConfigManager.saveProp("wordfilter.enabled", "true", file);
 

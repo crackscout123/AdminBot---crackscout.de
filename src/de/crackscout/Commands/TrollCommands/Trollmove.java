@@ -15,6 +15,7 @@ import com.github.theholywaffle.teamspeak3.api.wrapper.ClientInfo;
 
 import de.crackscout.AdminBot.Main;
 import de.crackscout.Managers.AuthManager;
+import de.crackscout.Managers.ConfigManager;
 import de.crackscout.Managers.Debug;
 
 public class Trollmove {
@@ -30,11 +31,16 @@ public class Trollmove {
 
         static TS3Api api = Main.api;
         
-        static int IGNORED_CHANNEL_IDS[] = {1, 2, 3}; // example channel IDs to ignore
-        static int IGNORED_CLIENT_IDS[] = {4, 5, 6}; // example client IDs to ignore
-        static int IGNORED_GROUP_IDS[] = {7, 8, 9}; // example group IDs to ignore
         static Client targetClient; // the client to be moved
         static List<Channel> validChannels = new ArrayList<>(); // list of channels the client can be moved to
+
+        
+		public static String msg_notarget = ConfigManager.loadProp("trollmove.no.target", "messages.properties");
+		public static String msg_ignored = ConfigManager.loadProp("trollmove.ignored", "messages.properties");
+
+        static int[] ignoredChannelIds = ConfigManager.loadIntArray("trollmove.ignored.channels", "config.properties");
+        static int[] ignoredClientIds = ConfigManager.loadIntArray("trollmove.ignored.clients", "config.properties");
+        static int[] ignoredGroupIds = ConfigManager.loadIntArray("trollmove.ignored.groups", "config.properties");
 
 	   
 		public static void load(){
@@ -85,7 +91,7 @@ public class Trollmove {
                             }
 */
                             if(isIgnored(targetClient)) {
-                                api.sendPrivateMessage(e.getInvokerId(), "The target client is in an ignored channel, group, or is an ignored client.");
+                                api.sendPrivateMessage(e.getInvokerId(), msg_ignored);
                                 return;
                             }
                             if(targetClient.getChannelId() == 0) {
@@ -94,7 +100,7 @@ public class Trollmove {
                             }
 
                             if(targetClient == null) {
-                                api.sendPrivateMessage(e.getInvokerId(), "No target client set. Please specify a client to move.");
+                                api.sendPrivateMessage(e.getInvokerId(), msg_notarget);
                                 return;
                             }
 							
@@ -172,17 +178,17 @@ public class Trollmove {
                         return true;
                 }
                 private boolean isIgnored(Client targetClient) {
-                    for(int channelId : IGNORED_CHANNEL_IDS) {
+                    for(int channelId : ignoredChannelIds) {
                         if(targetClient.getChannelId() == channelId) {
                             return true;
                         }
                     }
-                    for(int clientId : IGNORED_CLIENT_IDS) {
+                    for(int clientId : ignoredClientIds) {
                         if(targetClient.getId() == clientId) {
                             return true;
                         }
                     }
-                    for(int groupId : IGNORED_GROUP_IDS) {
+                    for(int groupId : ignoredGroupIds) {
                         for(int clientGroupId : targetClient.getServerGroups()) {
                             if(clientGroupId == groupId) {
                                 return true;
