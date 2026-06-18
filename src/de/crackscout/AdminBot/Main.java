@@ -43,7 +43,7 @@ public class Main {
 	// private static final Logger LOGGER = Logger.getLogger( Logging.class.getName() ); //@TODO rework logging, currently it just prints to console, but it should write to a file and have different log levels (info, warning, error)
 	
 	public static String bot_nickname = 
-		ConfigManager.loadProp("bot.nickname", "config.properties") != null ? ConfigManager.loadProp("bot.nickname", "config.properties") : "AdminBot dev-0.1.5";
+		ConfigManager.loadProp("bot.nickname", "config.properties") != null ? ConfigManager.loadProp("bot.nickname", "config.properties") : "AdminBot";
 
 	
 	// java adminbot.jar "hostname" "serverID" "username:password" -debug

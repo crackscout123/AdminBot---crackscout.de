@@ -52,7 +52,10 @@ public class AfkCollector implements Runnable {
 	
 	public void moveClient(Client client) {
 		try {		
-	        if (client.getId() != api.whoAmI().getId() && client.getChannelId() != afkChannelId && Arrays.stream(ignoredChannels).anyMatch(c -> c != client.getChannelId()) && client.getIdleTime() > maxIdleTime) {
+	        if (client.getId() != api.whoAmI().getId()
+	        		&& client.getChannelId() != afkChannelId
+	        		&& Arrays.stream(ignoredChannels).noneMatch(c -> c == client.getChannelId())
+	        		&& client.getIdleTime() > maxIdleTime) {
 				if (Arrays.stream(client.getServerGroups()).anyMatch(g -> Arrays.stream(ignoredGroups).anyMatch(ignored -> ignored == g))) {
 					return;
 				}

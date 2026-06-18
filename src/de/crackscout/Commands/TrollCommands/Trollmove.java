@@ -29,8 +29,6 @@ public class Trollmove {
         // The command will also check if the target client is currently in a channel before attempting to move them.
         // example command: !trollmove JohnDoe 10s
 
-        // currently not moving the target client, but the command is being parsed and the target client is being identified correctly. The moving part has to be fixed in the future.
-
         static TS3Api api = Main.api;
         
         static List<Channel> validChannels = new ArrayList<>(); // list of channels the client can be moved to
@@ -51,7 +49,6 @@ public class Trollmove {
 			int clientId = api.whoAmI().getId();
 		
 			// Listen to chat in the channel the query is currently in
-			// As we never changed the channel, this will be the default channel of the server
 			api.registerEvent(TS3EventType.TEXT_PRIVATE, 0);
 		
 			// Register the event listener
@@ -82,7 +79,7 @@ public class Trollmove {
                                 return;
                             }
 
-                            Client targetClient; // now local instead of static                           
+                            Client targetClient; // local variable, not static
                             if(!isInteger(args[1])) {
                                 targetClient = api.getClientByNameExact(args[1], true);
                             } else {
@@ -94,11 +91,11 @@ public class Trollmove {
                                 return;
                             }
 
-/*                            if(targetClient.getId() == clientId) {
+                            if(targetClient.getId() == clientId) {
                                 api.sendPrivateMessage(e.getInvokerId(), "You cannot move yourself.");
                                 return;
                             }
-*/
+
                             if(isIgnored(targetClient)) {
                                 api.sendPrivateMessage(e.getInvokerId(), msg_ignored);
                                 return;
@@ -108,9 +105,6 @@ public class Trollmove {
                                 return;
                             }
 
-
-							
-							api.sendPrivateMessage(e.getInvokerId(), "INFO: target client identified as " + targetClient.getNickname() + " with ID " + targetClient.getId()); //removeme
 							if(isInteger(args[2])) {
                                 int amount = Integer.parseInt(args[2]);
                                 validadChannlIds(targetClient.getChannelId(), api.getChannels());
@@ -150,16 +144,12 @@ public class Trollmove {
 
                 private void moveClientToRandomChannel(Client targetClient) {
                      if (!validChannels.isEmpty()) {
-                         validChannels.removeIf(channel -> channel.getId() == targetClient.getChannelId()); // remove the current channel from the list of valid channels
+                         validChannels.removeIf(channel -> channel.getId() == targetClient.getChannelId());
                          Channel randomChannel = validChannels.get(new Random().nextInt(validChannels.size()));
-                         System.out.println("INFO: Moving client " + targetClient.getNickname() + " to channel " + randomChannel.getName()); //removeme
+                         Debug.info("Moving client " + targetClient.getNickname() + " to channel " + randomChannel.getName());
                          api.moveClient(targetClient.getId(), randomChannel.getId());
-                         // i some how still get already member of channel error, 
-                         // even though the target channel is removed from the list of valid channels. 
-                         // and there multiple checks troughout the whole class to just check for this simple thing, 
-                         // maybe the channel list is not updated after moving the client? need to check that in the future.
-                         // generally speaking its working most of the time, but sometimes it tries to move the client to the same channel, which results in an error. need to fix that in the future.
-                         // gonna push this as it is for now, since the basic functionality is there 
+                         // @TODO: occasionally throws 'already member of channel' error even though current channel
+                         // is removed from validChannels. Channel list may not update fast enough after move.
                      }
                 }
 
@@ -182,9 +172,9 @@ public class Trollmove {
                         } catch(NullPointerException e) {
                             return false;
                         }
-                        // only got here if we didn't return false
                         return true;
                 }
+
                 private boolean isIgnored(Client targetClient) {
                     for(int channelId : ignoredChannelIds) {
                         if(targetClient.getChannelId() == channelId) {
@@ -216,6 +206,6 @@ public class Trollmove {
  *
  * @author Joel Rzepka - crackscout.de
  *
- * @date 23.53.2026 - 05:21:54
+ * @date 27.03.2023 - 02:19:52
  *
  */
