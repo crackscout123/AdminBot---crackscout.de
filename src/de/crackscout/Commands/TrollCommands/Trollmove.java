@@ -46,7 +46,7 @@ public class Trollmove {
 	   
 		public static void load(){
 			// Get our own client ID by running the "whoami" command
-			int clientId = api.whoAmI().getId();
+			int clientId = api.whoAmI().getId(); //thats the client of the bot itself, we need this to ignore messages sent by the bot and to prevent the bot from moving itself
 		
 			// Listen to chat in the channel the query is currently in
 			api.registerEvent(TS3EventType.TEXT_PRIVATE, 0);
@@ -91,7 +91,7 @@ public class Trollmove {
                                 return;
                             }
 
-                            if(targetClient.getId() == clientId) {
+                            if(targetClient.getId() == e.getInvokerId()) {
                                 api.sendPrivateMessage(e.getInvokerId(), "You cannot move yourself.");
                                 return;
                             }
