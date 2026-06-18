@@ -1,7 +1,5 @@
 package de.crackscout.AdminBot;
 
-
-import java.util.logging.Logger;
 import de.crackscout.Logging.Logging;
 
 import com.github.theholywaffle.teamspeak3.TS3Api;
@@ -18,7 +16,7 @@ import de.crackscout.Commands.Stats;
 import de.crackscout.Commands.Stay;
 import de.crackscout.Commands.TrollCommands.Trollmove;
 
-import de.crackscout.Events.Connections;
+import de.crackscout.Events.WordFilterEvents;
 import de.crackscout.Events.Disconnect;
 import de.crackscout.Events.StackedEvents;
 
@@ -42,18 +40,17 @@ public class Main {
 
 		
 	private static Thread collectorProzess, kickCollector;
-	private static final Logger LOGGER = Logger.getLogger( Logging.class.getName() );
+	// private static final Logger LOGGER = Logger.getLogger( Logging.class.getName() ); //@TODO rework logging, currently it just prints to console, but it should write to a file and have different log levels (info, warning, error)
 	
-	//public static String bot_nickname = ConfigManager.loadProp("bot.nickname", "config.properties");
 	public static String bot_nickname = 
-	ConfigManager.loadProp("bot.nickname", "config.properties") != null ? ConfigManager.loadProp("bot.nickname", "config.properties") : "AdminBot dev-0.1.5";
+		ConfigManager.loadProp("bot.nickname", "config.properties") != null ? ConfigManager.loadProp("bot.nickname", "config.properties") : "AdminBot dev-0.1.5";
 
 	
 	// java adminbot.jar "hostname" "serverID" "username:password" -debug
 	
 	public static void main(String[] args) {	
 		
-		registerLogging();
+		//registerLogging();
 		
 		Debug.info("Bot loading.");
 		
@@ -97,8 +94,8 @@ public class Main {
 		registerWordFilter();
 		Debug.info("WordFilter: registerd.");
 		
-		registerLogging();
-		Debug.info("Logging: registerd.");
+		//registerLogging();
+		Debug.info("Logging: currently deprecated; skipping.");
 		
 		registerCollectors();
 		Debug.info("Collectors: registerd.");
@@ -135,6 +132,8 @@ public class Main {
 		AuthManager.readKeys();
 	}
 	
+	@SuppressWarnings("unused")
+	@Deprecated
 	private static void registerLogging() {
 		Logging.createDefaults();
 	  	Logging logg = new Logging();
@@ -151,7 +150,7 @@ public class Main {
 		
 		//events
 		Disconnect.load();
-		Connections.load();
+		WordFilterEvents.load();
 		StackedEvents.load();
 
 		//troll commands
