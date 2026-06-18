@@ -19,7 +19,6 @@ public class WordFilterManager {
 		ConfigManager.loadProp("wordfilter.enabled", "config.properties") != null ? ConfigManager.loadProp("wordfilter.enabled", "config.properties") : "true"
 	);
 	
-	public static List<String> words = readWords();
 	public static void createDefaults() {
 		if(!ConfigManager.checkForDefault(blacklistFileName)) {
 			//@TODO add example words to the blacklist file
@@ -38,6 +37,7 @@ public class WordFilterManager {
 	}
 	
 	public static boolean check(String toBeChecked) {
+		List<String> words = readWords();
 		if (!enabled || toBeChecked == null) {
 			return false;
 		}

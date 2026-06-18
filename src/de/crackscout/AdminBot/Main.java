@@ -41,7 +41,7 @@ public class Main {
 	// private static final Logger LOGGER = Logger.getLogger( Logging.class.getName() ); //@TODO rework logging, currently it just prints to console, but it should write to a file and have different log levels (info, warning, error)
 
 	// Fallback only — actual value is loaded from config.properties after createDefaults() in main()
-	public static String bot_nickname = "AdminBot";
+	public static String bot_nickname = "AdminBot starting...";
 
 	
 	// java adminbot.jar "hostname" "serverID" "username:password" -debug
@@ -80,6 +80,7 @@ public class Main {
 		api = query.getApi();
 		api.login(username, password);
 		api.selectVirtualServerById(serverID);
+		api.setNickname(bot_nickname); // Set default nickname before loading settings, in case config.properties doesn't exist yet
 
 		// Load settings first so config.properties exists before reading bot_nickname
 		registerSettingsManager();
@@ -90,12 +91,13 @@ public class Main {
 		if (configured != null) bot_nickname = configured;
 		api.setNickname(bot_nickname);
 		
-		registerMessageManager();
-		Debug.info("MessageManager: registerd.");
-		
+
 		registerWordFilter();
 		Debug.info("WordFilter: registerd.");
-		
+
+		registerMessageManager();
+		Debug.info("MessageManager: registerd.");
+				
 		//registerLogging();
 		Debug.info("Logging: currently deprecated; skipping.");
 		

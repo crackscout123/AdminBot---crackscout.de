@@ -81,7 +81,7 @@ public class ConfigManager {
 		File path = new File("AdminBot/" + file);
 		if(!path.exists()) {
 			path.getParentFile().mkdirs();
-			System.out.println("created.");
+			System.out.println(file + " created.");
 			return false;
 		}
 		return true;
