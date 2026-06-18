@@ -41,7 +41,7 @@ public class AfkCollector implements Runnable {
 			}
 			
 			List<Client> clients = api.getClients();
-			System.out.println("Trying to move and evaluate clients... \n DEBUG: ignored channels: " + Arrays.toString(ignoredChannels));
+			System.out.println("Trying to move and evaluate clients...");
 			for (Client client : clients) {
 				if(!whitelistedUsers.contains(client.getId())) {
 					moveClient(client);

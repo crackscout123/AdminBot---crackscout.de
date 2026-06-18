@@ -1,7 +1,9 @@
 package de.crackscout.Commands.TrollCommands;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import com.github.theholywaffle.teamspeak3.TS3Api;
@@ -31,7 +33,6 @@ public class Trollmove {
 
         static TS3Api api = Main.api;
         
-        static Client targetClient; // the client to be moved
         static List<Channel> validChannels = new ArrayList<>(); // list of channels the client can be moved to
 
         
@@ -41,6 +42,8 @@ public class Trollmove {
         static int[] ignoredChannelIds = ConfigManager.loadIntArray("trollmove.ignored.channels", "config.properties");
         static int[] ignoredClientIds = ConfigManager.loadIntArray("trollmove.ignored.clients", "config.properties");
         static int[] ignoredGroupIds = ConfigManager.loadIntArray("trollmove.ignored.groups", "config.properties");
+
+        public static Map<Integer, Thread> activeTrollMoves = new HashMap<>(); // map to keep track of active trollmove threads for each client
 
 	   
 		public static void load(){
@@ -78,11 +81,17 @@ public class Trollmove {
                                 api.sendPrivateMessage(e.getInvokerId(), "Usage: !trollmove <clientName/id> <amount/duration>");
                                 return;
                             }
-                                                        
+
+                            Client targetClient; // now local instead of static                           
                             if(!isInteger(args[1])) {
                                 targetClient = api.getClientByNameExact(args[1], true);
                             } else {
                                 targetClient = api.getClientInfo(Integer.parseInt(args[1]));
+                            }
+
+                            if(targetClient == null) {
+                                api.sendPrivateMessage(e.getInvokerId(), msg_notarget);
+                                return;
                             }
 
 /*                            if(targetClient.getId() == clientId) {
@@ -99,17 +108,14 @@ public class Trollmove {
                                 return;
                             }
 
-                            if(targetClient == null) {
-                                api.sendPrivateMessage(e.getInvokerId(), msg_notarget);
-                                return;
-                            }
+
 							
-							api.sendPrivateMessage(e.getInvokerId(), "debug: target client identified as " + targetClient.getNickname() + " with ID " + targetClient.getId());
+							api.sendPrivateMessage(e.getInvokerId(), "INFO: target client identified as " + targetClient.getNickname() + " with ID " + targetClient.getId()); //removeme
 							if(isInteger(args[2])) {
                                 int amount = Integer.parseInt(args[2]);
                                 validadChannlIds(targetClient.getChannelId(), api.getChannels());
                                 for(int i = 0; i < amount; i++) {
-                                    moveClientToRandomChannel();     
+                                    moveClientToRandomChannel(targetClient);     
                             }
                             } else {
                                 validadChannlIds(targetClient.getChannelId(), api.getChannels()); 
@@ -124,13 +130,16 @@ public class Trollmove {
                                 }
                                 final int durationSeconds = duration;
                                 new Thread(() -> {
+                                    activeTrollMoves.put(targetClient.getId(), Thread.currentThread());
                                     long endTime = System.currentTimeMillis() + durationSeconds * 1000L;
                                     while(System.currentTimeMillis() < endTime) {
-                                        moveClientToRandomChannel();                                    
+                                        moveClientToRandomChannel(targetClient);                                    
                                         try {
                                             Thread.sleep(1000);
                                         } catch (InterruptedException ex) {
                                             Thread.currentThread().interrupt();
+                                            activeTrollMoves.remove(targetClient.getId());
+                                            break;
                                         }
                                     }
                                 }).start();
@@ -139,11 +148,11 @@ public class Trollmove {
 					}
 				}
 
-                private void moveClientToRandomChannel() {
+                private void moveClientToRandomChannel(Client targetClient) {
                      if (!validChannels.isEmpty()) {
                          validChannels.removeIf(channel -> channel.getId() == targetClient.getChannelId()); // remove the current channel from the list of valid channels
                          Channel randomChannel = validChannels.get(new Random().nextInt(validChannels.size()));
-                         System.out.println("removeme: Moving client " + targetClient.getNickname() + " to channel " + randomChannel.getName());
+                         System.out.println("INFO: Moving client " + targetClient.getNickname() + " to channel " + randomChannel.getName()); //removeme
                          api.moveClient(targetClient.getId(), randomChannel.getId());
                          // i some how still get already member of channel error, 
                          // even though the target channel is removed from the list of valid channels. 
@@ -161,7 +170,6 @@ public class Trollmove {
                         boolean isSpacer = name.matches("^\\[(?:[rcl]?spacer\\d*)\\].*");
                          if (!isSpacer && channel.getId() != currentChannelId) {
                              validChannels.add(channel);
-                             System.out.println("removeme: Added channel " + channel.getName() + " to valid channels list.");
                          }
                      }
                 }

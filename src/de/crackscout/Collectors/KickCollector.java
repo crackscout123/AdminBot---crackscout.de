@@ -41,6 +41,7 @@ public class KickCollector implements Runnable {
 	
 	public void kickClients(Client client) {
 		if(kickMeList.contains(client.getId())) {		
+			kickMeList.remove((Integer) client.getId());
 			api.kickClientFromServer(client);
  			//kickMeList.remove(id);  - !!! Exception in thread "Thread-1" java.lang.IndexOutOfBoundsException: Index 345 out of bounds for length 1 !!!
 		}

@@ -29,7 +29,6 @@ public class Ping {
 				if (e.getTargetMode() != TextMessageTargetMode.CLIENT && e.getInvokerId() != clientId) {
 					String message = e.getMessage().toLowerCase();
 
-					Integer clientId = e.getInvokerId();
 					if (message.equals("!ping")) {
 						// Answer "!ping" with "pong"
 						api.sendPrivateMessage(e.getInvokerId(), "pong");

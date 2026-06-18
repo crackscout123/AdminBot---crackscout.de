@@ -5,6 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import com.github.theholywaffle.teamspeak3.api.wrapper.Client;
 
@@ -18,18 +19,16 @@ public class WordFilterManager {
 		ConfigManager.loadProp("wordfilter.enabled", "config.properties") != null ? ConfigManager.loadProp("wordfilter.enabled", "config.properties") : "true"
 	);
 	
-	public static List<String> words = readWords() != null ? readWords() : new ArrayList<>();	
+	public static List<String> words = readWords();
 	public static void createDefaults() {
 		if(!ConfigManager.checkForDefault(blacklistFileName)) {
 			//@TODO add example words to the blacklist file
 			try {	
 				Files.write(Paths.get("AdminBot/" + blacklistFileName), List.of(
-					"enabled=true",
-					"# This is the blacklist file. Add words you want to filter out line by line.",
-					"# Lines starting with # are ignored and can be used for comments.",
-					"example1",
-					"example2",
-					"example3"
+					"# Normales Wort-Matching",
+					"badword",
+					"# Regex-Matching",
+					"regex:f+[u\\*ü0]+c+k+"
 				));
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -37,29 +36,40 @@ public class WordFilterManager {
 
 		}
 	}
-
-	//@TODO regex support and better word matching (currently it just checks if the message contains the blacklisted word, which can lead to false positives);
 	
 	public static boolean check(String toBeChecked) {
-		if(enabled){ 
-			for (int i = 0; i < words.size(); i++) {
-				System.out.println("USER: " + toBeChecked + " LIST: " + words.get(i));
-				if(toBeChecked.contains(words.get(i))) {
-					System.out.println("matched");
+		if (!enabled || toBeChecked == null) {
+			return false;
+		}
+
+		for (int i = 0; i < words.size(); i++) {
+			String entry = String.valueOf(words.get(i)).trim();
+			if (entry.isEmpty()) {
+				continue;
+			}
+			if (entry.startsWith("regex:")) {
+				String regex = entry.substring(6).trim();
+				if (!regex.isEmpty() &&
+					Pattern.compile(regex, Pattern.CASE_INSENSITIVE).matcher(toBeChecked).find()) {
 					return true;
 				}
-			}  
+			} else {
+				String regex = "(?i)\\b" + Pattern.quote(entry) + "\\b";
+				if (Pattern.compile(regex).matcher(toBeChecked).find()) {
+					return true;
+				}
+			}
 		}
+
 		return false;
 	}
 	
-	public static List<String> readWords() { // words are phrased line by line
+	public static List<String> readWords() {
 		try {
 			List<String> allLines = Files.readAllLines(Paths.get("AdminBot/" + blacklistFileName));
-			allLines.remove(0); // remove first line (enabled=true/false)
-			allLines.removeIf(line -> line.startsWith("#")); // remove comments
+			allLines.remove(0);
+			allLines.removeIf(line -> line.startsWith("#"));
 			return allLines;
-
 		} catch (IOException e) {
 			e.printStackTrace();
 			return new ArrayList<>();

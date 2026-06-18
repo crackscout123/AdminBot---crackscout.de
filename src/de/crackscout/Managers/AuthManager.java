@@ -3,6 +3,7 @@ package de.crackscout.Managers;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.github.theholywaffle.teamspeak3.api.wrapper.Client;
@@ -41,7 +42,7 @@ public class AuthManager {
 
 		} catch (IOException e) {
 			e.printStackTrace();
-			return null;
+			return new ArrayList<>();
 		}
 	}
 }

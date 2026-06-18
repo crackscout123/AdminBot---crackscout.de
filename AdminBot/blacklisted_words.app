@@ -1,5 +1,4 @@
-# This is the blacklist file. Add words you want to filter out line by line.
-# Lines starting with # are ignored and can be used for comments.
-example1
-example2
-example3
+# Normales Wort-Matching
+badword
+# Regex-Matching
+regex:f+[u\*ü0]+c+k+
