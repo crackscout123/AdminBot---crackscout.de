@@ -37,13 +37,11 @@ public class Main {
 	private static String[] credentials;
 	public static Boolean debug = false;
 
-
-		
 	private static Thread collectorProzess, kickCollector;
 	// private static final Logger LOGGER = Logger.getLogger( Logging.class.getName() ); //@TODO rework logging, currently it just prints to console, but it should write to a file and have different log levels (info, warning, error)
-	
-	public static String bot_nickname = 
-		ConfigManager.loadProp("bot.nickname", "config.properties") != null ? ConfigManager.loadProp("bot.nickname", "config.properties") : "AdminBot";
+
+	// Fallback only — actual value is loaded from config.properties after createDefaults() in main()
+	public static String bot_nickname = "AdminBot";
 
 	
 	// java adminbot.jar "hostname" "serverID" "username:password" -debug
@@ -82,11 +80,15 @@ public class Main {
 		api = query.getApi();
 		api.login(username, password);
 		api.selectVirtualServerById(serverID);
-		api.setNickname(bot_nickname);
-		
 
+		// Load settings first so config.properties exists before reading bot_nickname
 		registerSettingsManager();
 		Debug.info("SettingsManager: registerd.");
+
+		// Now safely read bot_nickname from config (file is guaranteed to exist after createDefaults())
+		String configured = ConfigManager.loadProp("bot.nickname", "config.properties");
+		if (configured != null) bot_nickname = configured;
+		api.setNickname(bot_nickname);
 		
 		registerMessageManager();
 		Debug.info("MessageManager: registerd.");
