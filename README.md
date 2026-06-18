@@ -1,8 +1,8 @@
 # AdminBot – crackscout.de
 
-Ein privater administrativer **TeamSpeak3-Server-Query-Bot** für den TeamSpeak-Server von [crackscout.de](https://crackscout.de). Der Bot übernimmt automatisierte Moderations- und Verwaltungsaufgaben (AFK-Verschiebung, Selbst-Kick, Whitelist-Verwaltung, Wortfilter mit Regex-Support, Statistik- und Debug-Ausgaben sowie experimentelle „Troll\"-Funktionen) und wird über private TeamSpeak-Chatnachrichten (`!command`) gesteuert.
+Ein privater administrativer **TeamSpeak3-Server-Query-Bot** für den TeamSpeak-Server von [crackscout.de](https://crackscout.de). Der Bot übernimmt automatisierte Moderations- und Verwaltungsaufgaben (AFK-Verschiebung, Selbst-Kick, Whitelist-Verwaltung, Wortfilter mit Regex-Support, Statistik- und Debug-Ausgaben sowie experimentelle „Troll"-Funktionen) und wird über private TeamSpeak-Chatnachrichten (`!command`) gesteuert.
 
-> ⚠️ **Hinweis:** Dieses Projekt ist primär für den internen Gebrauch auf crackscout.de entwickelt und befindet sich in aktiver Entwicklung (Stand: `dev-0.1.5`). Manche Funktionen (insbesondere `!trollmove` und der Wortfilter) sind weiterhin als „in development\" markiert.
+> ⚠️ **Hinweis:** Dieses Projekt ist primär für den internen Gebrauch auf crackscout.de entwickelt. Stand: `1.0`. Manche Funktionen (insbesondere `!trollmove`) sind weiterhin als „in development" markiert.
 
 ***
 
