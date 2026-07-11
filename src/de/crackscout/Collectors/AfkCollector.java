@@ -8,6 +8,7 @@ import com.github.theholywaffle.teamspeak3.TS3Api;
 import com.github.theholywaffle.teamspeak3.api.wrapper.Client;
 
 import de.crackscout.Managers.ConfigManager;
+import de.crackscout.Managers.Debug;
 import de.crackscout.Managers.Utils;
 
 public class AfkCollector implements Runnable {
@@ -35,8 +36,10 @@ public class AfkCollector implements Runnable {
 			try {
 				Thread.sleep(sleepTime);
 			} catch (InterruptedException e) {
-				System.out.println("Encountered an interrupted exception while sleeping, shutting down collection service... \n Dumping error:");
-				e.printStackTrace();
+				Thread.currentThread().interrupt(); 
+				Debug.info("AfkCollector: Shutdown signal received, stopping.");
+				//System.out.println("Encountered an interrupted exception while sleeping, shutting down collection service... \n Dumping error:");
+				//e.printStackTrace();
                 return;
 			}
 			

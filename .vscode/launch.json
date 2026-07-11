@@ -10,7 +10,7 @@
             "request": "launch",
             "mainClass": "de.crackscout.AdminBot.Main",
             "projectName": "AdminBot - crackscout.de",
-            "args": "crackscout.eu 1 serveradmin:password1234"
+            "args": "crackscout.eu 1 serveradmin:test123"
         }
     ]
 }

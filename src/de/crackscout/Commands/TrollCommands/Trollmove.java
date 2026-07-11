@@ -1,10 +1,10 @@
 package de.crackscout.Commands.TrollCommands;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import com.github.theholywaffle.teamspeak3.TS3Api;
 import com.github.theholywaffle.teamspeak3.api.TextMessageTargetMode;
@@ -31,7 +31,7 @@ public class Trollmove {
 
         static TS3Api api = Main.api;
         
-        static List<Channel> validChannels = new ArrayList<>(); // list of channels the client can be moved to
+        static List<Channel> validChannels = new CopyOnWriteArrayList<>(); // list of channels the client can be moved to
 
         
 		public static String msg_notarget = ConfigManager.loadProp("trollmove.no.target", "messages.properties");

@@ -10,6 +10,7 @@ import de.crackscout.Collectors.AfkCollector;
 import de.crackscout.Collectors.KickCollector;
 
 import de.crackscout.Commands.Clear;
+import de.crackscout.Commands.Help;
 import de.crackscout.Commands.KickMe;
 import de.crackscout.Commands.Ping;
 import de.crackscout.Commands.Stats;
@@ -37,7 +38,7 @@ public class Main {
 	private static String[] credentials;
 	public static Boolean debug = false;
 
-	private static Thread collectorProzess, kickCollector;
+	private static Thread afkCollector, kickCollector;
 	// private static final Logger LOGGER = Logger.getLogger( Logging.class.getName() ); //@TODO rework logging, currently it just prints to console, but it should write to a file and have different log levels (info, warning, error)
 
 	// Fallback only — actual value is loaded from config.properties after createDefaults() in main()
@@ -98,8 +99,8 @@ public class Main {
 		registerMessageManager();
 		Debug.info("MessageManager: registerd.");
 				
-		//registerLogging();
-		Debug.info("Logging: currently deprecated; skipping.");
+		registerLogging();
+		Debug.info("Logging: registerd.");
 		
 		registerCollectors();
 		Debug.info("Collectors: registerd.");
@@ -136,12 +137,9 @@ public class Main {
 		AuthManager.readKeys();
 	}
 	
-	@SuppressWarnings("unused")
-	@Deprecated
+
 	private static void registerLogging() {
-		Logging.createDefaults();
-	  	Logging logg = new Logging();
-	  	logg.setup();
+		Logging.getInstance();
 	}
 	
 	
@@ -151,6 +149,7 @@ public class Main {
 		Stay.load();
 		Clear.load();
 		Stats.load();
+		Help.load();
 		
 		//events
 		Disconnect.load();
@@ -166,14 +165,36 @@ public class Main {
 
 
 	private static void registerCollectors() {
-		collectorProzess = new Thread(new AfkCollector(api));
-	    collectorProzess.start();
+		afkCollector = new Thread(new AfkCollector(api));
+	    afkCollector.start();
 	    kickCollector = new Thread(new KickCollector(api));
 	    kickCollector.start();
-	    
+	    registerShutdownHook();
 		Debug.info("Collectors loaded.");
 	}
 
+	private static void registerShutdownHook() {
+		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+			Debug.info("Shutdown hook triggered. Stopping collectors...");
+			if (afkCollector != null && afkCollector.isAlive()) {
+				afkCollector.interrupt();
+				Debug.info("AfkCollector stopped.");
+			}
+			if (kickCollector != null && kickCollector.isAlive()) {
+				kickCollector.interrupt();
+				Debug.info("KickCollector stopped.");
+			}
+			try {
+				Thread.sleep(1000); // Wait for collectors to stop
+				api.unregisterAllEvents();
+				api.logout();
+				Thread.sleep(500); // Wait for logout to complete
+				Logging.getInstance().shutdown();
+			} catch (Exception e) {
+				Debug.err("Shutdown hook interrupted while waiting for collectors to stop. Error: \n"+ e.getMessage());
+			}
+		}));
+	}
 		
 	/**
 	 * TODO:
