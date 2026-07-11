@@ -1,47 +1,79 @@
 package de.crackscout.Logging;
 
+import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.logging.FileHandler;
-import java.util.logging.Level;
+import java.util.logging.Formatter;
+import java.util.logging.LogRecord;
 import java.util.logging.Logger;
-import java.util.logging.SimpleFormatter;
-
-import de.crackscout.Managers.ConfigManager;
-import de.crackscout.Managers.TimeHandler;
 
 public class Logging {
 
-	public static String file = "logs/init";
-		
-	public static void createDefaults() { if(!ConfigManager.checkForDefault(file)) {} }
-	
-	public void setup() {
+    private static final String LOG_DIR = "logs";
+    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
 
-	  	Logger logger = Logger.getLogger("MyLog");  
-	    FileHandler fh;  
-	    
-	    try {  
+    private static Logging instance;
 
-	        // This block configure the logger with handler and formatter  
-	    	String filepath = Utils.getUniqueFileName("AdminBot/logs", TimeHandler.sdf3.format(new Date())+".log").toString();
-	        fh = new FileHandler(filepath, true);  
-	        //fh.setFormatter(new MyFormatter());  
-	        logger.addHandler(fh);
-	        
-	        SimpleFormatter formatter = new SimpleFormatter();  
-	        fh.setFormatter(formatter);  
+    private Logger logger;
+    private FileHandler fileHandler;
+    private String currentDay;
 
-	        // the following statement is used to log any messages  
-	        logger.info("Begin of the log (" + TimeHandler.sdf1.format(new Date()) + ")");  
-	        logger.setUseParentHandlers(false);
+    private Logging() {
+        new File(LOG_DIR).mkdirs();
+        rotate();
+    }
 
-	    } catch (SecurityException e) {  
-	        logger.log(Level.SEVERE, e.toString(), e);  
-	    } catch (IOException e) {  
-	        logger.log(Level.SEVERE, e.toString(), e);  
-	    }   
-	}
+    public static synchronized Logging getInstance() {
+        if (instance == null) instance = new Logging();
+        return instance;
+    }
+
+    /** Gibt den Logger zurück – rotiert automatisch wenn der Tag gewechselt hat */
+    public Logger getLogger() {
+        String today = DATE_FORMAT.format(new Date());
+        if (!today.equals(currentDay)) rotate();
+        return logger;
+    }
+
+    private void rotate() {
+        currentDay = DATE_FORMAT.format(new Date());
+
+        if (logger != null && fileHandler != null) {
+            logger.removeHandler(fileHandler);
+            fileHandler.close();
+        }
+
+        logger = Logger.getLogger("AdminBot");
+        logger.setUseParentHandlers(false); // kein doppelter stdout-Output
+
+        try {
+            String path = LOG_DIR + File.separator + currentDay + ".log";
+            fileHandler = new FileHandler(path, true); // append=true → Neustart überschreibt nicht
+            fileHandler.setFormatter(new Formatter() {
+                private final SimpleDateFormat ts = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                @Override
+                public String format(LogRecord r) {
+                    return String.format("[%s] [%-7s] %s%n",
+                        ts.format(new Date(r.getMillis())),
+                        r.getLevel().getName(),
+                        r.getMessage());
+                }
+            });
+            logger.addHandler(fileHandler);
+        } catch (IOException e) {
+            System.err.println("[Logging] Konnte Log-Datei nicht öffnen: " + e.getMessage());
+        }
+    }
+
+    /** Im Shutdown Hook aufrufen für sauberes Flush */
+    public void shutdown() {
+        if (fileHandler != null) {
+            fileHandler.flush();
+            fileHandler.close();
+        }
+    }
 }
 
 
@@ -49,6 +81,6 @@ public class Logging {
  *
  * @author Joel Rzepka - crackscout.de
  *
- * @date 22.03.2023 - 23:53:49
+ * @date 11.07.2026 - 09:58:49
  *
  */

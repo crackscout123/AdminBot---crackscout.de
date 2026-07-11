@@ -6,6 +6,7 @@ import java.util.List;
 import com.github.theholywaffle.teamspeak3.TS3Api;
 import com.github.theholywaffle.teamspeak3.api.wrapper.Client;
 
+import de.crackscout.Managers.Debug;
 import de.crackscout.Managers.Utils;
 
 public class KickCollector implements Runnable {
@@ -24,9 +25,11 @@ public class KickCollector implements Runnable {
 		while(true) {
 			try {
 				Thread.sleep(sleep);
-			} catch (InterruptedException e) {
-				System.out.println("Encountered an interrupted exception while sleeping, shutting down collection service... \n Dumping error:");
-				e.printStackTrace();
+			} catch (InterruptedException e) { 
+				Thread.currentThread().interrupt(); 
+				Debug.info("KickCollector: Shutdown signal received, stopping.");
+				//System.out.println("Encountered an interrupted exception while sleeping, shutting down collection service... \n Dumping error:");
+				//e.printStackTrace();
 				return;
 			}
 			
