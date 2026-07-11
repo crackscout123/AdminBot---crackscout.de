@@ -11,7 +11,7 @@ import java.util.logging.Logger;
 
 public class Logging {
 
-    private static final String LOG_DIR = "logs";
+    private static final String LOG_DIR = "AdminBot/logs";
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
 
     private static Logging instance;
