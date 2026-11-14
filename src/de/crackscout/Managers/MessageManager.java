@@ -27,6 +27,8 @@ public class MessageManager {
                 ConfigManager.saveProp("stay.removed", "Du wurdest von der Whitelist entfernt.", file);  
                 ConfigManager.saveProp("trollmove.no.target", "Kein Zielclient gesetzt. Bitte einen Client angeben.", file);
                 ConfigManager.saveProp("trollmove.ignored", "Der Zielclient befindet sich in einem ignorierten Channel/Gruppe.", file);
+
+                ConfigManager.saveProp("wasser.notify.msg", "Stay hydrated!", file);
                 //ConfigManager.saveProp("help", helpText(), file);
 
 		}

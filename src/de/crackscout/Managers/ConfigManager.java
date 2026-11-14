@@ -81,7 +81,7 @@ public class ConfigManager {
 		File path = new File("AdminBot/" + file);
 		if(!path.exists()) {
 			path.getParentFile().mkdirs();
-			System.out.println(file + " created.");
+			Debug.info(file + " created.");
 			return false;
 		}
 		return true;
@@ -99,6 +99,14 @@ public class ConfigManager {
 		}
 		return 0; // Return default value if key not found
 	}
+
+    public static boolean loadBool(String key, String file) {
+        String value = loadProp(key, file);
+        if(value != null) {
+            return Boolean.parseBoolean(value);
+        }
+        return false; // Return default value if key not found
+    }
 }
 
 

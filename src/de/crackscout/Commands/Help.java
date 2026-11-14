@@ -7,7 +7,6 @@ import com.github.theholywaffle.teamspeak3.api.event.TS3EventType;
 import com.github.theholywaffle.teamspeak3.api.event.TextMessageEvent;
 
 import de.crackscout.AdminBot.Main;
-import de.crackscout.Managers.ConfigManager;
 import de.crackscout.Managers.MessageManager;
 
 public class Help {
