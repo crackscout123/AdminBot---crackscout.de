@@ -24,6 +24,14 @@ public class SettingsManager {
                 ConfigManager.saveProp("trollmove.ignored.clients", "4,5,6", file);
                 ConfigManager.saveProp("trollmove.ignored.groups", "7,8,9", file);
 
+
+                ConfigManager.saveProp("wasser.selected.channels", "34,", file);
+                ConfigManager.saveProp("wasser.ignored.groups", "18,", file);
+                ConfigManager.saveProp("wasser.sleep.ms", "60000", file);       
+                ConfigManager.saveProp("wasser.max.idle.s", "300", file);
+                ConfigManager.saveProp("wasser.poke.enabled", "true", file);
+                ConfigManager.saveProp("wasser.notify.seconds", "3600", file);
+
 		}
 	}
 }

@@ -38,13 +38,13 @@ public class AfkCollector implements Runnable {
 			} catch (InterruptedException e) {
 				Thread.currentThread().interrupt(); 
 				Debug.info("AfkCollector: Shutdown signal received, stopping.");
-				//System.out.println("Encountered an interrupted exception while sleeping, shutting down collection service... \n Dumping error:");
+				//Debug.info("Encountered an interrupted exception while sleeping, shutting down collection service... \n Dumping error:");
 				//e.printStackTrace();
                 return;
 			}
 			
 			List<Client> clients = api.getClients();
-			System.out.println("Trying to move and evaluate clients...");
+			Debug.info("Trying to move and evaluate clients...");
 			for (Client client : clients) {
 				if(!whitelistedUsers.contains(client.getId())) {
 					moveClient(client);
@@ -66,7 +66,7 @@ public class AfkCollector implements Runnable {
 				api.sendPrivateMessage(client.getId(), msg_afk_moved);
 	        }
 		} catch (Exception e) {
-			System.out.println("Failed to fetch client details, dumping error info: " + e.getMessage());
+			Debug.err("Failed to fetch client details, dumping error info: " + e.getMessage());
 		}
 	}
 }

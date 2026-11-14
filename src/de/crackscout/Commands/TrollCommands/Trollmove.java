@@ -74,6 +74,38 @@ public class Trollmove {
 						if (message.equals("!trollmove")) {
                             api.sendPrivateMessage(e.getInvokerId(), "Usage: !trollmove <clientName/id> <amount/duration>");
                         } else if (message.startsWith("!trollmove ")) {
+
+
+                            if(args[1].equalsIgnoreCase("stop")) {
+                                if(args.length < 3) {
+                                    api.sendPrivateMessage(e.getInvokerId(), "Usage: !trollmove stop <clientName/id>");
+                                    return;
+                                }
+                                Client targetClient; // local variable, not static
+                                if(!isInteger(args[2])) {
+                                    targetClient = api.getClientByNameExact(args[2], true);
+                                } else {
+                                    targetClient = api.getClientInfo(Integer.parseInt(args[2]));
+                                }
+
+                                if(targetClient == null) {
+                                    api.sendPrivateMessage(e.getInvokerId(), msg_notarget);
+                                    return;
+                                }
+
+                                Thread activeThread = activeTrollMoves.get(targetClient.getId());
+                                if(activeThread != null) {
+                                    activeThread.interrupt();
+                                    activeTrollMoves.remove(targetClient.getId());
+                                    api.sendPrivateMessage(e.getInvokerId(), "Stopped moving client " + targetClient.getNickname());
+                                } else {
+                                    api.sendPrivateMessage(e.getInvokerId(), "No active trollmove found for client " + targetClient.getNickname());
+                                }
+                                return;
+                            }
+
+
+                            
                             if(args.length < 3) {
                                 api.sendPrivateMessage(e.getInvokerId(), "Usage: !trollmove <clientName/id> <amount/duration>");
                                 return;

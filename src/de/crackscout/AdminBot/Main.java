@@ -8,7 +8,7 @@ import com.github.theholywaffle.teamspeak3.TS3Query;
 
 import de.crackscout.Collectors.AfkCollector;
 import de.crackscout.Collectors.KickCollector;
-
+import de.crackscout.Collectors.WasserCollector;
 import de.crackscout.Commands.Clear;
 import de.crackscout.Commands.Help;
 import de.crackscout.Commands.KickMe;
@@ -18,6 +18,7 @@ import de.crackscout.Commands.Stay;
 import de.crackscout.Commands.TrollCommands.Trollmove;
 
 import de.crackscout.Events.WordFilterEvents;
+import de.crackscout.Events.Connect;
 import de.crackscout.Events.Disconnect;
 import de.crackscout.Events.StackedEvents;
 
@@ -38,7 +39,7 @@ public class Main {
 	private static String[] credentials;
 	public static Boolean debug = false;
 
-	private static Thread afkCollector, kickCollector;
+	private static Thread afkCollector, kickCollector, wasserCollector;
 	// private static final Logger LOGGER = Logger.getLogger( Logging.class.getName() ); //@TODO rework logging, currently it just prints to console, but it should write to a file and have different log levels (info, warning, error)
 
 	// Fallback only — actual value is loaded from config.properties after createDefaults() in main()
@@ -140,8 +141,7 @@ public class Main {
 
 	private static void registerLogging() {
 		Logging.getInstance();
-	}
-	
+	}	
 	
 	private static void registerCommands() {
 		KickMe.load();
@@ -152,6 +152,7 @@ public class Main {
 		Help.load();
 		
 		//events
+		Connect.load();
 		Disconnect.load();
 		WordFilterEvents.load();
 		StackedEvents.load();
@@ -169,6 +170,9 @@ public class Main {
 	    afkCollector.start();
 	    kickCollector = new Thread(new KickCollector(api));
 	    kickCollector.start();
+	    wasserCollector = new Thread(new WasserCollector(api));
+	    wasserCollector.start();
+
 	    registerShutdownHook();
 		Debug.info("Collectors loaded.");
 	}
@@ -183,6 +187,10 @@ public class Main {
 			if (kickCollector != null && kickCollector.isAlive()) {
 				kickCollector.interrupt();
 				Debug.info("KickCollector stopped.");
+			}
+			if (wasserCollector != null && wasserCollector.isAlive()) {
+				wasserCollector.interrupt();
+				Debug.info("WasserCollector stopped.");
 			}
 			try {
 				Thread.sleep(1000); // Wait for collectors to stop
